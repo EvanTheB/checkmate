@@ -16,3 +16,8 @@ class BoardState(object):
         raise NotImplementedError()
         return 0.0
 
+def run_min_max(initial_board):
+    return initial_board.get_moves()[0]
+
+def run_a_star(initial_board):
+    return initial_board.get_moves()[0]
