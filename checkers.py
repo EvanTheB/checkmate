@@ -1,19 +1,23 @@
 import checkmate
 
 
+
 class Checkers(checkmate.BoardState):
     """Checkers"""
 
-    def __init__(self):
-        self.board = [[None] * 10 for _ in range(10)]
-        for x in range(10):
-            self.board[x][x % 2] = 0
-            self.board[x][x % 2 + 2] = 0
+    def __init__(self, init_board=None, x_turn=True):
+        if init_board:
+            self.board = init_board
+        else:
+            self.board = [[None] * 10 for _ in range(10)]
+            for x in range(10):
+                self.board[x][x % 2] = 0
+                self.board[x][x % 2 + 2] = 0
 
-            self.board[x][x % 2 + 6] = 1
-            self.board[x][x % 2 + 8] = 1
+                self.board[x][x % 2 + 6] = 1
+                self.board[x][x % 2 + 8] = 1
 
-        self.x_turn = True
+        self.x_turn = x_turn
 
     def __str__(self):
         tch = {0: 'X', 1: 'O', None: " "}
@@ -52,6 +56,9 @@ class Checkers(checkmate.BoardState):
                 if self.board[x][y] == movers_piece:
                     moves += get_moves_for_piece(x, y)
         return moves
+
+    def apply_move(self, move):
+
 
 if __name__ == '__main__':
     print str(Checkers())
