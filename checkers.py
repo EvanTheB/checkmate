@@ -1,5 +1,6 @@
 import checkmate
 
+import copy
 
 
 class Checkers(checkmate.BoardState):
@@ -58,8 +59,32 @@ class Checkers(checkmate.BoardState):
         return moves
 
     def apply_move(self, move):
+        yinc = 1 if self.x_turn else -1
 
+        new_board = copy.deepcopy(self.board)
+        piece = new_board[move[0]][move[1]]
+        new_board[move[0]][move[1]] = None
+        new_board[move[0] + move[2]][move[1] + yinc] = piece
+
+        return Checkers(init_board=new_board, x_turn=not self.x_turn)
 
 if __name__ == '__main__':
-    print str(Checkers())
+    import random
+
+    print Checkers()
     print Checkers().get_moves()
+    print Checkers().apply_move(Checkers().get_moves()[0])
+    print
+
+    board = Checkers()
+    for x in xrange(1000):
+        print board
+        moves = board.get_moves()
+        if moves:
+            board = board.apply_move(random.choice(moves))
+        else:
+            break
+    print board
+
+
+
