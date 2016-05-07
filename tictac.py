@@ -32,7 +32,21 @@ class TicTac(checkmate.BoardState):
         new_board[(x, y)] = self.x_turn
         return TicTac(new_board, not self.x_turn)
 
+    def rate_board(self):
+        def line(a, b, c):
+            if self.board[a] == self.board[b] == self.board[c]:
+                return self.board[a]
 
+        def all_lines():
+            for x in range(3):
+                yield ((x, 0), (x, 1), (x, 2))
+                yield ((0, x), (1, x), (2, x))
+            yield ((0, 0), (1, 1), (2, 2))
+            yield ((2, 0), (1, 1), (0, 2))
+
+        if any(line(a, b, c) == (not self.x_turn) for a, b, c in all_lines()):
+            # Don't check for other win, they would have won already
+            return float("inf")
 
 
 if __name__ == '__main__':
@@ -42,11 +56,16 @@ if __name__ == '__main__':
     print TicTac().apply_move(random.choice(list(TicTac().get_moves())))
     print
 
+    # board = TicTac()
+    # for x in xrange(1000):
+    #     print board
+    #     print board.rate_board()
+    #     moves = list(board.get_moves())
+    #     if moves:
+    #         board = board.apply_move(random.choice(moves))
+    #     else:
+    #         break
+
     board = TicTac()
-    for x in xrange(1000):
-        print board
-        moves = list(board.get_moves())
-        if moves:
-            board = board.apply_move(random.choice(moves))
-        else:
-            break
+    checkmate.run_min_max(board)
+
