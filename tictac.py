@@ -22,15 +22,16 @@ class TicTac(checkmate.BoardState):
     def get_moves(self):
         for y in range(3):
             for x in range(3):
-                if not self.board[(x, y)]:
+                if self.board[(x, y)] is None:
                     yield (x, y)
 
     def apply_move(self, move):
         x, y = move
         assert not self.board[(x, y)]
         new_board = copy.copy(self.board)
-        new_board[(x,y)] = self.x_turn
+        new_board[(x, y)] = self.x_turn
         return TicTac(new_board, not self.x_turn)
+
 
 
 
@@ -39,5 +40,13 @@ if __name__ == '__main__':
     print TicTac()
     print list(TicTac().get_moves())
     print TicTac().apply_move(random.choice(list(TicTac().get_moves())))
-
     print
+
+    board = TicTac()
+    for x in xrange(1000):
+        print board
+        moves = list(board.get_moves())
+        if moves:
+            board = board.apply_move(random.choice(moves))
+        else:
+            break
