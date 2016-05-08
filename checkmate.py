@@ -16,8 +16,19 @@ class BoardState(object):
         raise NotImplementedError()
         return 0.0
 
+
 def run_min_max(initial_board):
-    return initial_board.get_moves()[0]
+    def min_max_rec(board, maximise):
+        moves = list(board.get_moves())
+        if len(moves) == 0 or board.game_done():
+            return (board.rate_board() * maximise * -1, None)
+
+        if maximise > 0:
+            return max(((min_max_rec(board.apply_move(m), -1)[0], m) for m in moves), key=lambda x: x[0])
+        else:
+            return min(((min_max_rec(board.apply_move(m), +1)[0], m) for m in moves), key=lambda x: x[0])
+    return min_max_rec(initial_board, 1)
+
 
 def run_a_star(initial_board):
     return initial_board.get_moves()[0]

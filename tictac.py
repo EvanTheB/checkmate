@@ -6,13 +6,14 @@ import collections
 class TicTac(checkmate.BoardState):
     """Tic Tac Toe"""
 
-    def __init__(self, board=None, x_turn=False):
+    def __init__(self, board=None, x_turn=True):
         self.board = collections.defaultdict(lambda: None, board or [])
         self.x_turn = x_turn
 
     def __str__(self):
-        tch = {0: 'X', 1: 'O', None: " "}
+        tch = {True: 'X', False: 'O', None: " "}
         ret = "x_turn:{}\n".format(self.x_turn)
+        ret += "winner:{}\n".format(self.rate_board() > 0)
         for y in reversed(range(3)):
             for x in range(3):
                 ret += tch[self.board[(x, y)]]
@@ -32,6 +33,10 @@ class TicTac(checkmate.BoardState):
         new_board[(x, y)] = self.x_turn
         return TicTac(new_board, not self.x_turn)
 
+    def game_done(self):
+        return len([p for p in self.board.values() if p is not None]) == 9 \
+            or abs(self.rate_board()) == float("inf")
+
     def rate_board(self):
         def line(a, b, c):
             if self.board[a] == self.board[b] == self.board[c]:
@@ -47,25 +52,43 @@ class TicTac(checkmate.BoardState):
         if any(line(a, b, c) == (not self.x_turn) for a, b, c in all_lines()):
             # Don't check for other win, they would have won already
             return float("inf")
+        return 0
 
 
 if __name__ == '__main__':
     import random
-    print TicTac()
-    print list(TicTac().get_moves())
-    print TicTac().apply_move(random.choice(list(TicTac().get_moves())))
-    print
+    # print TicTac()
+    # print list(TicTac().get_moves())
+    # print TicTac().apply_move(random.choice(list(TicTac().get_moves())))
+    # print
 
     # board = TicTac()
     # for x in xrange(1000):
     #     print board
     #     print board.rate_board()
+    #     print board.game_done()
+    #     print
     #     moves = list(board.get_moves())
     #     if moves:
     #         board = board.apply_move(random.choice(moves))
     #     else:
     #         break
 
-    board = TicTac()
-    checkmate.run_min_max(board)
+    # its a draw
+    board = TicTac().apply_move((0, 0))
+    while not board.game_done():
+        board = board.apply_move(checkmate.run_min_max(board)[1])
+        print board
+        print
 
+    board = TicTac().apply_move((0, 1))
+    while not board.game_done():
+        board = board.apply_move(checkmate.run_min_max(board)[1])
+        print board
+        print
+
+    board = TicTac().apply_move((1, 1))
+    while not board.game_done():
+        board = board.apply_move(checkmate.run_min_max(board)[1])
+        print board
+        print
