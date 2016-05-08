@@ -51,7 +51,7 @@ class TicTac(checkmate.BoardState):
 
         if any(line(a, b, c) == (not self.x_turn) for a, b, c in all_lines()):
             # Don't check for other win, they would have won already
-            return float("inf")
+            return float("-inf")
         return 0
 
 

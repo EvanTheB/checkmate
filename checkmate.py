@@ -11,8 +11,15 @@ class BoardState(object):
         raise NotImplementedError()
         return BoardState()
 
+    def game_done():
+        """True if the game is done. IE a winner or no possible moves."""
+        raise NotImplementedError()
+        return False
+
     def rate_board():
-        """rate board for search algorithm"""
+        """rate board for search algorithm
+        +ve for states good for the player whos turn it is.
+        """
         raise NotImplementedError()
         return 0.0
 
@@ -21,7 +28,7 @@ def run_min_max(initial_board):
     def min_max_rec(board, maximise):
         moves = list(board.get_moves())
         if len(moves) == 0 or board.game_done():
-            return (board.rate_board() * maximise * -1, None)
+            return (board.rate_board() * maximise, None)
 
         if maximise > 0:
             return max(((min_max_rec(board.apply_move(m), -1)[0], m) for m in moves), key=lambda x: x[0])
