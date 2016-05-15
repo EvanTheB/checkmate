@@ -39,16 +39,28 @@ class Checkers(checkmate.BoardState):
                 return []
             moves = []
 
-            if (0 <= x < 9 and self.board[x + 1][y + yinc] is None
-                or (0 > y + 2 * yinc > 9
-                    and self.board[x + 1][y + yinc] == not_movers_piece
-                    and self.board[x + 2][y + yinc + yinc] is None)):
+            if 0 <= x < 9 and self.board[x + 1][y + yinc] is None:
                 moves.append((x, y, 1))
-            if (1 <= x < 10 and self.board[x - 1][y + yinc] is None
-                or (0 > y + 2 * yinc > 9
-                    and self.board[x - 1][y + yinc] == not_movers_piece
-                    and self.board[x - 2][y + yinc + yinc] is None)):
+            if 1 <= x < 10 and self.board[x - 1][y + yinc] is None:
                 moves.append((x, y, -1))
+
+            def can_take(x, y):
+                if 0 > y + 2 * yinc > 9:
+                    return []
+
+                ret = []
+                if (0 <= x < 8
+                        and self.board[x + 1][y + yinc] == not_movers_piece
+                        and self.board[x + 2][y + 2 * yinc] is None):
+                    ret += [(x, y, 2) + m for m in can_take(x + 2, y + 2 * yinc)]
+
+                if (2 <= x < 10
+                        and self.board[x - 1][y + yinc] == not_movers_piece
+                        and self.board[x - 2][y + 2 * yinc] is None):
+                    ret += [(x, y, -2) + m for m in can_take(x - 2, y + 2 * yinc)]
+                return ret
+
+            moves += can_take(x, y)
             return moves
 
         moves = []
@@ -64,6 +76,7 @@ class Checkers(checkmate.BoardState):
         new_board = copy.deepcopy(self.board)
         piece = new_board[move[0]][move[1]]
         new_board[move[0]][move[1]] = None
+
         new_board[move[0] + move[2]][move[1] + yinc] = piece
 
         return Checkers(init_board=new_board, x_turn=not self.x_turn)
@@ -85,6 +98,3 @@ if __name__ == '__main__':
         else:
             break
     print board
-
-
-
