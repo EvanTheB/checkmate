@@ -13,12 +13,18 @@ class TicTac(checkmate.BoardState):
     def __str__(self):
         tch = {True: 'X', False: 'O', None: " "}
         ret = "x_turn:{}\n".format(self.x_turn)
-        ret += "winner:{}\n".format(self.rate_board() > 0)
+        ret += "winner:{}\n".format(self.rate_board() < 0)
         for y in reversed(range(3)):
             for x in range(3):
                 ret += tch[self.board[(x, y)]]
             ret += "\n"
         return ret[:-1]
+
+    def __repr__(self):
+        return "TicTac(board={}, x_turn={})".format(
+            dict(self.board),
+            self.x_turn
+        )
 
     def get_moves(self):
         for y in range(3):
@@ -75,20 +81,27 @@ if __name__ == '__main__':
     #         break
 
     # its a draw
+    # alg = checkmate.run_min_max
+    alg = checkmate.run_alpha_beta
+
     board = TicTac().apply_move((0, 0))
     while not board.game_done():
-        board = board.apply_move(checkmate.run_min_max(board)[1])
+        board = board.apply_move(alg(board)[1])
         print board
+        print repr(board)
+        print "YOMAMA"
         print
 
     board = TicTac().apply_move((0, 1))
     while not board.game_done():
-        board = board.apply_move(checkmate.run_min_max(board)[1])
+        board = board.apply_move(alg(board)[1])
         print board
+        print "YOMAMA"
         print
 
     board = TicTac().apply_move((1, 1))
     while not board.game_done():
-        board = board.apply_move(checkmate.run_min_max(board)[1])
+        board = board.apply_move(alg(board)[1])
         print board
+        print "YOMAMA"
         print
